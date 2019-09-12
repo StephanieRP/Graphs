@@ -71,8 +71,44 @@ class SocialGraph:
         The key is the friend's ID and the value is the path.
         """
         visited = {}  # Note that this is a dictionary, not a set
-        # !!!! IMPLEMENT ME
+        visited[userID] = [userID]
+        queue = [userID]
+        popped = []
+        while len(queue) > 0:
+            current_node = queue.pop(0)
+            popped.append(current_node)
+
+            if current_node in sg.friendships:
+                for friend in sg.friendships[current_node]:
+                    if friend not in visited:
+                        queue.append(friend)
+                        visited[friend] = self.bfs(
+                            sg.friendships, userID, friend)
         return visited
+
+    def bfs(self, vertices, starting_vertex, destination_vertex):
+        """
+        Return a list containing the shortest path from
+        starting_vertex to destination_vertex in
+        breath-first order.
+        """
+        q = [[starting_vertex]]
+
+        found = []
+
+        while len(q) > 0:
+            path = q.pop(0)
+            vertex = path[-1]
+
+            if vertex not in found:
+                if vertex == destination_vertex:
+                    return path
+                found.append(vertex)
+                for next_vertex in vertices[vertex]:
+                    new_path = list(path)
+                    new_path.append(next_vertex)
+                    q.append(new_path)
+        return None
 
 
 if __name__ == '__main__':
